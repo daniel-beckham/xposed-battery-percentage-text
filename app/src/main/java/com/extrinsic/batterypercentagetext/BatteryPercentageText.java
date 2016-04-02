@@ -65,7 +65,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         mPercentLockScreenTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
 
                         if (!mBatteryCharging && mLockScreenSettingEnabled) {
-                            mPercentLockScreenTextView.setVisibility(View.VISIBLE);
+                            if (mPercentLockScreenTextView != null) {
+                                mPercentLockScreenTextView.setVisibility(View.VISIBLE);
+                            }
                         }
                     }
                 });
