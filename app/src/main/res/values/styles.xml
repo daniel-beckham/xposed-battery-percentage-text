@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <style name="AppBaseTheme" parent="android:Theme.Material.Light.DarkActionBar" />
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:colorPrimary">#228b22</item>
         <item name="android:colorPrimaryDark">#1b6f1b</item>
         <item name="android:colorAccent">#228b22</item>
     </style>
+
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">Battery Percentage Text</string>
     <string name="app_description">Shows battery percentage remaining on lock screen and in status bar</string>
     <string name="title_activity_main">Battery Percentage Text</string>
@@ -10,4 +11,5 @@
     <string name="pref_lock_screen_setting_summary">Shows battery percentage on lock screen whether device is charging or not</string>
     <string name="pref_status_bar_setting_title">Enable on status bar</string>
     <string name="pref_status_bar_setting_summary">Shows battery percentage on status bar between signal cluster icons and battery icon</string>
+
 </resources>

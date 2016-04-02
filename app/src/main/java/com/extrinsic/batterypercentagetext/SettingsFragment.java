@@ -36,14 +36,18 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Intent intent = new Intent();
-        if (key.equals(PREF_BATTERY_LOCK_SCREEN_SETTING)) {
-            intent.setAction(ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED);
-            intent.putExtra(EXTRA_BATTERY_LOCK_SCREEN_SETTING_ENABLED, sharedPreferences.getBoolean(PREF_BATTERY_LOCK_SCREEN_SETTING, false));
+
+        switch (key) {
+            case PREF_BATTERY_LOCK_SCREEN_SETTING:
+                intent.setAction(ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED);
+                intent.putExtra(EXTRA_BATTERY_LOCK_SCREEN_SETTING_ENABLED, sharedPreferences.getBoolean(PREF_BATTERY_LOCK_SCREEN_SETTING, false));
+                break;
+            case PREF_BATTERY_STATUS_BAR_SETTING:
+                intent.setAction(ACTION_PREF_STATUS_BAR_SETTING_CHANGED);
+                intent.putExtra(EXTRA_BATTERY_STATUS_BAR_SETTING_ENABLED, sharedPreferences.getBoolean(PREF_BATTERY_STATUS_BAR_SETTING, false));
+                break;
         }
-        else if (key.equals(PREF_BATTERY_STATUS_BAR_SETTING)) {
-            intent.setAction(ACTION_PREF_STATUS_BAR_SETTING_CHANGED);
-            intent.putExtra(EXTRA_BATTERY_STATUS_BAR_SETTING_ENABLED, sharedPreferences.getBoolean(PREF_BATTERY_STATUS_BAR_SETTING, false));
-        }
+
         if (intent.getAction() != null) {
             getActivity().sendBroadcast(intent);
         }
