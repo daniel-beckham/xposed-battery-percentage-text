@@ -51,14 +51,10 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
             try {
                 final Class<?> phoneKeyguardStatusBarViewClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.KeyguardStatusBarView", lpparam.classLoader);
 
-                XposedHelpers.findAndHookMethod(phoneKeyguardStatusBarViewClass, "onBatteryLevelChanged", int.class, boolean.class, boolean.class, new XC_MethodHook() {
+                XposedHelpers.findAndHookMethod(phoneKeyguardStatusBarViewClass, "onFinishInflate", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        mBatteryCharging = (boolean) XposedHelpers.getObjectField(param.thisObject, "mBatteryCharging");
-
-                        if (!mBatteryCharging && mLockScreenSettingEnabled) {
-                            XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
-                        }
+                        XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
                     }
                 });
 
