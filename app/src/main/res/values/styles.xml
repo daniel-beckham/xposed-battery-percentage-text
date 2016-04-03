@@ -4,9 +4,9 @@
     <style name="AppBaseTheme" parent="android:Theme.Material.Light.DarkActionBar" />
 
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:colorPrimary">#228b22</item>
-        <item name="android:colorPrimaryDark">#1b6f1b</item>
-        <item name="android:colorAccent">#228b22</item>
+        <item name="android:colorPrimary">#388e3c</item>
+        <item name="android:colorPrimaryDark">#2e7d32</item>
+        <item name="android:colorAccent">#388e3c</item>
     </style>
 
 </resources>
