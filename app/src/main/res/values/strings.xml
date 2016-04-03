@@ -5,14 +5,15 @@
     <string name="app_description">Shows battery percentage on lock screen, in notification shade header, and in status bar</string>
 
     <string name="pref_lock_screen_category">Lock screen</string>
-    <string name="pref_lock_screen_title">Shows on lock screen near battery icon whether device is charging or not</string>
+    <string name="pref_lock_screen_summary">Shows on lock screen near battery icon whether device is charging or not</string>
 
     <string name="pref_notification_shade_header_category">Notification shade header</string>
-    <string name="pref_notification_shade_header_title">Shows in notification shade header near battery icon whether shader is expanded or not</string>
+    <string name="pref_notification_shade_header_summary">Shows in notification shade header near battery icon whether shader is expanded or not</string>
 
     <string name="pref_status_bar_category">Status bar</string>
-    <string name="pref_status_bar_title">Shows in status bar near battery icon</string>
+    <string name="pref_status_bar_summary">Shows in status bar near battery icon</string>
 
+    <string name="pref_enable_title">Enable</string>
     <string name="pref_position_title">Position</string>
     <string name="pref_font_size_title">Font size</string>
 

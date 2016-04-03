@@ -5,7 +5,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_lock_screen"
-            android:title="@string/pref_lock_screen_title" />
+            android:summary="@string/pref_lock_screen_summary"
+            android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
             android:defaultValue="1"
             android:entries="@array/position_options"
@@ -24,7 +25,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_notification_shade_header"
-            android:title="@string/pref_notification_shade_header_title" />
+            android:summary="@string/pref_notification_shade_header_summary"
+            android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
             android:defaultValue="1"
             android:entries="@array/position_options"
@@ -43,7 +45,8 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_status_bar"
-            android:title="@string/pref_status_bar_title" />
+            android:summary="@string/pref_status_bar_summary"
+            android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
             android:defaultValue="0"
             android:entries="@array/position_options"
