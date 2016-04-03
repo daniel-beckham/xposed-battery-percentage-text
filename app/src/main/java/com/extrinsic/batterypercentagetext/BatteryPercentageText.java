@@ -42,9 +42,16 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
     private Context keyguardStatusBarViewClassContext;
     private TextView lockScreenNativeTextView;
     private TextView lockScreenTextView;
+    private ViewGroup lockScreenViewGroup;
     private TextView notificationShadeHeaderNativeTextView;
     private TextView notificationShadeHeaderTextView;
+    private ViewGroup notificationShadeHeaderViewGroup;
     private TextView statusBarTextView;
+    private ViewGroup statusBarViewGroup;
+
+    private enum TextViewFontSize { SMALL, NORMAL };
+    private enum TextViewPosition { LEFT, RIGHT };
+    private enum TextViewType { LOCK_SCREEN, NOTIFICATION_SHADE_HEADER, STATUS_BAR };
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -96,17 +103,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         lockScreenNativeTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
-                        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(keyguardStatusBarViewClassContext.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
+                        lockScreenViewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(keyguardStatusBarViewClassContext.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        if (lockScreenTextView == null) {
-                            lockScreenTextView = new TextView(viewGroup.getContext());
-                            lockScreenTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                            lockScreenTextView.setPadding(20, 0, 0, 0);
-                            lockScreenTextView.setTextColor(Color.WHITE);
-                            lockScreenTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                            viewGroup.addView(lockScreenTextView, viewGroup.getChildCount());
-                        }
-
+                        createTextView(TextViewType.LOCK_SCREEN, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
                         XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
                     }
                 });
@@ -138,17 +137,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
                         notificationShadeHeaderNativeTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
-                        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
+                        notificationShadeHeaderViewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        if (notificationShadeHeaderTextView == null) {
-                            notificationShadeHeaderTextView = new TextView(viewGroup.getContext());
-                            notificationShadeHeaderTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                            notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
-                            notificationShadeHeaderTextView.setTextColor(Color.WHITE);
-                            notificationShadeHeaderTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-                            viewGroup.addView(notificationShadeHeaderTextView, viewGroup.getChildCount());
-                        }
-
+                        createTextView(TextViewType.NOTIFICATION_SHADE_HEADER, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
                         XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
                     }
                 });
@@ -179,23 +170,14 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
-                        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView")).findViewById(context.getResources().getIdentifier("signal_cluster", "id", "com.android.systemui"));
+                        statusBarViewGroup = (ViewGroup) ((ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView")).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        if (statusBarTextView == null) {
-                            statusBarTextView = new TextView(viewGroup.getContext());
-                            statusBarTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                            statusBarTextView.setPadding(20, 0, 0, 0);
-                            statusBarTextView.setTextColor(Color.WHITE);
-                            statusBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                            statusBarTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
+                        createTextView(TextViewType.STATUS_BAR, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
 
-                            if (statusBarSettingEnabled) {
-                                if (statusBarTextView != null) {
-                                    statusBarTextView.setVisibility(View.VISIBLE);
-                                }
+                        if (statusBarSettingEnabled) {
+                            if (statusBarTextView != null) {
+                                statusBarTextView.setVisibility(View.VISIBLE);
                             }
-
-                            viewGroup.addView(statusBarTextView, viewGroup.getChildCount());
                         }
                     }
                 });
@@ -292,4 +274,111 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
             }
         }
     };
+
+    private void createTextView(TextViewType textViewType, TextViewPosition textViewPosition, TextViewFontSize textViewFontSize) {
+        switch (textViewType) {
+            case LOCK_SCREEN:
+                if (lockScreenViewGroup != null) {
+                    if (lockScreenTextView != null) {
+                        if (lockScreenTextView.getParent() != null) {
+                            ((ViewGroup) lockScreenTextView.getParent()).removeView(lockScreenTextView);
+                        }
+                    }
+
+                    lockScreenTextView = new TextView(lockScreenViewGroup.getContext());
+                    lockScreenTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    lockScreenTextView.setPadding(20, 0, 0, 0);
+                    lockScreenTextView.setTextColor(Color.WHITE);
+
+                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                        lockScreenTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                        lockScreenTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                        lockScreenTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
+                    }
+
+                    if (textViewPosition == TextViewPosition.LEFT) {
+                        final int childCount = lockScreenViewGroup.getChildCount();
+
+                        for (int i = 0; i < childCount; i++) {
+                            if (lockScreenViewGroup.getChildAt(i).getClass().getName().equals("com.android.systemui.BatteryMeterView")) {
+                                lockScreenViewGroup.addView(lockScreenTextView, childCount - (childCount - i));
+                                break;
+                            }
+                        }
+                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                        lockScreenViewGroup.addView(lockScreenTextView, lockScreenViewGroup.getChildCount());
+                    }
+                }
+                break;
+            case NOTIFICATION_SHADE_HEADER:
+                if (notificationShadeHeaderViewGroup != null) {
+                    if (notificationShadeHeaderTextView != null) {
+                        if (notificationShadeHeaderTextView.getParent() != null) {
+                            ((ViewGroup) notificationShadeHeaderTextView.getParent()).removeView(notificationShadeHeaderTextView);
+                        }
+                    }
+
+                    notificationShadeHeaderTextView = new TextView(notificationShadeHeaderViewGroup.getContext());
+                    notificationShadeHeaderTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
+                    notificationShadeHeaderTextView.setTextColor(Color.WHITE);
+
+                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                        notificationShadeHeaderTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                        notificationShadeHeaderTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                        notificationShadeHeaderTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
+                    }
+
+                    if (textViewPosition == TextViewPosition.LEFT) {
+                        final int childCount = notificationShadeHeaderViewGroup.getChildCount();
+
+                        for (int i = 0; i < childCount; i++) {
+                            if (notificationShadeHeaderViewGroup.getChildAt(i).getClass().getName().equals("com.android.systemui.BatteryMeterView")) {
+                                notificationShadeHeaderViewGroup.addView(notificationShadeHeaderTextView, childCount - (childCount - i));
+                                break;
+                            }
+                        }
+                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                        notificationShadeHeaderViewGroup.addView(notificationShadeHeaderTextView, notificationShadeHeaderViewGroup.getChildCount());
+                    }
+                }
+                break;
+            case STATUS_BAR:
+                if (statusBarViewGroup != null) {
+                    if (statusBarTextView != null) {
+                        if (statusBarTextView.getParent() != null) {
+                            ((ViewGroup) statusBarTextView.getParent()).removeView(statusBarTextView);
+                        }
+                    }
+
+                    statusBarTextView = new TextView(statusBarViewGroup.getContext());
+                    statusBarTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    statusBarTextView.setPadding(20, 0, 0, 0);
+                    statusBarTextView.setTextColor(Color.WHITE);
+
+                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                        statusBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                        statusBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+                        statusBarTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
+                    }
+
+                    if (textViewPosition == TextViewPosition.LEFT) {
+                        final int childCount = statusBarViewGroup.getChildCount();
+
+                        for (int i = 0; i < childCount; i++) {
+                            if (statusBarViewGroup.getChildAt(i).getClass().getName().equals("com.android.systemui.BatteryMeterView")) {
+                                statusBarViewGroup.addView(statusBarTextView, childCount - (childCount - i));
+                                break;
+                            }
+                        }
+                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                        statusBarViewGroup.addView(statusBarTextView, statusBarViewGroup.getChildCount());
+                    }
+                }
+                break;
+        }
+    }
 }
