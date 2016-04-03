@@ -68,6 +68,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
     private int statusBarPosition;
 
     private Context keyguardStatusBarViewClassContext;
+
     private TextView lockScreenNativeTextView;
     private TextView lockScreenTextView;
     private ViewGroup lockScreenViewGroup;
@@ -87,14 +88,25 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
         sharedPreferences.makeWorldReadable();
 
         lockScreenEnabled = sharedPreferences.getBoolean(PREF_LOCK_SCREEN, true);
-        lockScreenFontSize = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_FONT_SIZE, ""));
-        lockScreenPosition = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_POSITION, ""));
         notificationShadeHeaderEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_SHADE_HEADER, true);
-        notificationShadeHeaderFontSize = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE, ""));
-        notificationShadeHeaderPosition = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_POSITION, ""));
         statusBarEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
-        statusBarFontSize = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_FONT_SIZE, ""));
-        statusBarPosition = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_POSITION, ""));
+
+        try {
+            lockScreenFontSize = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_FONT_SIZE, ""));
+            lockScreenPosition = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_POSITION, ""));
+            notificationShadeHeaderFontSize = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE, ""));
+            notificationShadeHeaderPosition = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_POSITION, ""));
+            statusBarEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
+            statusBarFontSize = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_FONT_SIZE, ""));
+            statusBarPosition = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_POSITION, ""));
+        } catch (NumberFormatException e) {
+            lockScreenFontSize = PREF_FONT_SIZE_NORMAL;
+            lockScreenPosition = PREF_POSITION_LEFT;
+            notificationShadeHeaderFontSize = PREF_FONT_SIZE_NORMAL;
+            notificationShadeHeaderPosition = PREF_POSITION_LEFT;
+            statusBarFontSize = PREF_FONT_SIZE_NORMAL;
+            statusBarPosition = PREF_POSITION_LEFT;
+        }
     }
 
     @Override
