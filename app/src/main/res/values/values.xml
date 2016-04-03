@@ -11,12 +11,12 @@
         <item>1</item>
     </string-array>
 
-    <string-array name="text_size_options">
+    <string-array name="font_size_options">
         <item>Small</item>
         <item>Normal</item>
     </string-array>
 
-    <string-array name="text_size_values">
+    <string-array name="font_size_values">
         <item>0</item>
         <item>1</item>
     </string-array>
