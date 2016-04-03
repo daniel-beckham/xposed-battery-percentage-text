@@ -8,16 +8,16 @@
             android:summary="@string/pref_lock_screen_summary"
             android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:entries="@array/position_options"
             android:entryValues="@array/position_values"
             android:key="pref_lock_screen_position"
             android:title="@string/pref_position_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
-            android:defaultValue="0"
+            android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"
-            android:key="pref_lock_screen_text_size"
+            android:key="pref_lock_screen_font_size"
             android:title="@string/pref_font_size_title" />
     </PreferenceCategory>
 
@@ -28,16 +28,16 @@
             android:summary="@string/pref_notification_shade_header_summary"
             android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
-            android:defaultValue="1"
+            android:defaultValue="0"
             android:entries="@array/position_options"
             android:entryValues="@array/position_values"
             android:key="pref_notification_shade_header_position"
             android:title="@string/pref_position_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
-            android:defaultValue="0"
+            android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"
-            android:key="pref_notification_shade_header_text_size"
+            android:key="pref_notification_shade_header_font_size"
             android:title="@string/pref_font_size_title" />
     </PreferenceCategory>
 
@@ -57,7 +57,7 @@
             android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"
-            android:key="pref_status_bar_text_size"
+            android:key="pref_status_bar_font_size"
             android:title="@string/pref_font_size_title" />
     </PreferenceCategory>
 

@@ -22,22 +22,50 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_LOCK_SCREEN_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_STATUS_BAR_SETTING_CHANGED;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_LOCK_SCREEN_SETTING_ENABLED;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_NOTIFICATION_SHADE_HEADER_ENABLED;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_STATUS_BAR_SETTING_ENABLED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_STATUS_BAR_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_STATUS_BAR_POSITION_CHANGED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_LOCK_SCREEN_ENABLED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_LOCK_SCREEN_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_LOCK_SCREEN_POSITION;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_NOTIFICATION_SHADE_HEADER_ENABLED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_NOTIFICATION_SHADE_HEADER_POSITION;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_STATUS_BAR_ENABLED;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_STATUS_BAR_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_PREF_STATUS_BAR_POSITION;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_FONT_SIZE_NORMAL;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_FONT_SIZE_SMALL;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_LOCK_SCREEN;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_LOCK_SCREEN_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_LOCK_SCREEN_POSITION;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_NOTIFICATION_SHADE_HEADER;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_NOTIFICATION_SHADE_HEADER_POSITION;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_POSITION_LEFT;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_POSITION_RIGHT;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_BAR;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_BAR_FONT_SIZE;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_BAR_POSITION;
 
 public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private boolean batteryCharging;
 
-    private boolean lockScreenSettingEnabled;
-    private boolean notificationShadeHeaderSettingEnabled;
-    private boolean statusBarSettingEnabled;
+    private boolean lockScreenEnabled;
+    private int lockScreenFontSize;
+    private int lockScreenPosition;
+    private boolean notificationShadeHeaderEnabled;
+    private int notificationShadeHeaderFontSize;
+    private int notificationShadeHeaderPosition;
+    private boolean statusBarEnabled;
+    private int statusBarFontSize;
+    private int statusBarPosition;
 
     private Context keyguardStatusBarViewClassContext;
     private TextView lockScreenNativeTextView;
@@ -49,18 +77,24 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
     private TextView statusBarTextView;
     private ViewGroup statusBarViewGroup;
 
-    private enum TextViewFontSize { SMALL, NORMAL };
-    private enum TextViewPosition { LEFT, RIGHT };
-    private enum TextViewType { LOCK_SCREEN, NOTIFICATION_SHADE_HEADER, STATUS_BAR };
+    final private int TEXT_VIEW_TYPE_LOCK_SCREEN = 0;
+    final private int TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER = 1;
+    final private int TEXT_VIEW_TYPE_STATUS_BAR = 2;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
         XSharedPreferences sharedPreferences = new XSharedPreferences("com.extrinsic.batterypercentagetext");
         sharedPreferences.makeWorldReadable();
 
-        lockScreenSettingEnabled = sharedPreferences.getBoolean(PREF_LOCK_SCREEN, true);
-        notificationShadeHeaderSettingEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_SHADE_HEADER, true);
-        statusBarSettingEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
+        lockScreenEnabled = sharedPreferences.getBoolean(PREF_LOCK_SCREEN, true);
+        lockScreenFontSize = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_FONT_SIZE, ""));
+        lockScreenPosition = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_POSITION, ""));
+        notificationShadeHeaderEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_SHADE_HEADER, true);
+        notificationShadeHeaderFontSize = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE, ""));
+        notificationShadeHeaderPosition = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_POSITION, ""));
+        statusBarEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
+        statusBarFontSize = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_FONT_SIZE, ""));
+        statusBarPosition = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_POSITION, ""));
     }
 
     @Override
@@ -75,9 +109,15 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         IntentFilter intentFilter = new IntentFilter();
                         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-                        intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED);
                         intentFilter.addAction(ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED);
-                        intentFilter.addAction(ACTION_PREF_STATUS_BAR_SETTING_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_STATUS_BAR_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_STATUS_BAR_POSITION_CHANGED);
 
                         keyguardStatusBarViewClassContext = (Context) param.args[0];
                         keyguardStatusBarViewClassContext.registerReceiver(mBroadcastReceiver, intentFilter);
@@ -90,7 +130,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         lockScreenNativeTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
                         lockScreenViewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(keyguardStatusBarViewClassContext.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        createTextView(TextViewType.LOCK_SCREEN, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
+                        createTextView(TEXT_VIEW_TYPE_LOCK_SCREEN, lockScreenFontSize, lockScreenPosition);
                         XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
                     }
                 });
@@ -98,7 +138,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedHelpers.findAndHookMethod(keyguardStatusBarViewClass, "updateVisibilities", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if (lockScreenSettingEnabled) {
+                        if (lockScreenEnabled) {
                             if (lockScreenNativeTextView != null) {
                                 lockScreenNativeTextView.setVisibility(View.GONE);
                             }
@@ -124,7 +164,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         notificationShadeHeaderNativeTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
                         notificationShadeHeaderViewGroup = (ViewGroup) ((ViewGroup) param.thisObject).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        createTextView(TextViewType.NOTIFICATION_SHADE_HEADER, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
+                        createTextView(TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER, notificationShadeHeaderFontSize, notificationShadeHeaderPosition);
                         XposedHelpers.callMethod(param.thisObject, "updateVisibilities");
                     }
                 });
@@ -132,7 +172,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedHelpers.findAndHookMethod(statusBarHeaderViewClass, "updateVisibilities", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if (notificationShadeHeaderSettingEnabled) {
+                        if (notificationShadeHeaderEnabled) {
                             if (notificationShadeHeaderNativeTextView != null) {
                                 notificationShadeHeaderNativeTextView.setVisibility(View.GONE);
                             }
@@ -157,9 +197,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
                         statusBarViewGroup = (ViewGroup) ((ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView")).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
-                        createTextView(TextViewType.STATUS_BAR, TextViewPosition.RIGHT, TextViewFontSize.NORMAL);
+                        createTextView(TEXT_VIEW_TYPE_STATUS_BAR, statusBarFontSize, statusBarPosition);
 
-                        if (statusBarSettingEnabled) {
+                        if (statusBarEnabled) {
                             if (statusBarTextView != null) {
                                 statusBarTextView.setVisibility(View.VISIBLE);
                             }
@@ -243,11 +283,11 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         statusBarTextView.setText(String.format("%s%%", level));
                     }
                     break;
-                case ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED:
-                    if (intent.hasExtra(EXTRA_LOCK_SCREEN_SETTING_ENABLED)) {
-                        lockScreenSettingEnabled = intent.getBooleanExtra(EXTRA_LOCK_SCREEN_SETTING_ENABLED, false);
+                case ACTION_PREF_LOCK_SCREEN_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_LOCK_SCREEN_ENABLED)) {
+                        lockScreenEnabled = intent.getBooleanExtra(EXTRA_PREF_LOCK_SCREEN_ENABLED, false);
 
-                        if (lockScreenSettingEnabled) {
+                        if (lockScreenEnabled) {
                             if (lockScreenNativeTextView != null) {
                                 lockScreenNativeTextView.setVisibility(View.GONE);
                             }
@@ -268,11 +308,29 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         }
                     }
                     break;
-                case ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED:
-                    if (intent.hasExtra(EXTRA_NOTIFICATION_SHADE_HEADER_ENABLED)) {
-                        notificationShadeHeaderSettingEnabled = intent.getBooleanExtra(EXTRA_NOTIFICATION_SHADE_HEADER_ENABLED, false);
+                case ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_LOCK_SCREEN_FONT_SIZE)) {
+                        lockScreenFontSize = intent.getIntExtra(EXTRA_PREF_LOCK_SCREEN_FONT_SIZE, PREF_FONT_SIZE_NORMAL);
 
-                        if (notificationShadeHeaderSettingEnabled) {
+                        if (lockScreenEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_LOCK_SCREEN, lockScreenFontSize, lockScreenPosition);
+                        }
+                    }
+                    break;
+                case ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_LOCK_SCREEN_POSITION)) {
+                        lockScreenPosition = intent.getIntExtra(EXTRA_PREF_LOCK_SCREEN_POSITION, PREF_POSITION_LEFT);
+
+                        if (lockScreenEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_LOCK_SCREEN, lockScreenFontSize, lockScreenPosition);
+                        }
+                    }
+                    break;
+                case ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_ENABLED)) {
+                        notificationShadeHeaderEnabled = intent.getBooleanExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_ENABLED, false);
+
+                        if (notificationShadeHeaderEnabled) {
                             if (notificationShadeHeaderNativeTextView != null) {
                                 notificationShadeHeaderNativeTextView.setVisibility(View.GONE);
                             }
@@ -291,11 +349,29 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         }
                     }
                     break;
-                case ACTION_PREF_STATUS_BAR_SETTING_CHANGED:
-                    if (intent.hasExtra(EXTRA_STATUS_BAR_SETTING_ENABLED)) {
-                        statusBarSettingEnabled = intent.getBooleanExtra(EXTRA_STATUS_BAR_SETTING_ENABLED, false);
+                case ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE)) {
+                        notificationShadeHeaderFontSize = intent.getIntExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE, PREF_FONT_SIZE_NORMAL);
 
-                        if (statusBarSettingEnabled) {
+                        if (notificationShadeHeaderEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER, notificationShadeHeaderFontSize, notificationShadeHeaderPosition);
+                        }
+                    }
+                    break;
+                case ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_POSITION)) {
+                        notificationShadeHeaderPosition = intent.getIntExtra(EXTRA_PREF_NOTIFICATION_SHADE_HEADER_POSITION, PREF_POSITION_LEFT);
+
+                        if (notificationShadeHeaderEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER, notificationShadeHeaderFontSize, notificationShadeHeaderPosition);
+                        }
+                    }
+                    break;
+                case ACTION_PREF_STATUS_BAR_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_STATUS_BAR_ENABLED)) {
+                        statusBarEnabled = intent.getBooleanExtra(EXTRA_PREF_STATUS_BAR_ENABLED, false);
+
+                        if (statusBarEnabled) {
                             if (statusBarTextView != null) {
                                 statusBarTextView.setVisibility(View.VISIBLE);
                             }
@@ -306,33 +382,52 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         }
                     }
                     break;
+                case ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_STATUS_BAR_FONT_SIZE)) {
+                        statusBarFontSize = intent.getIntExtra(EXTRA_PREF_STATUS_BAR_FONT_SIZE, PREF_FONT_SIZE_NORMAL);
+
+                        if (statusBarEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_STATUS_BAR, statusBarFontSize, statusBarPosition);
+                        }
+                    }
+                    break;
+                case ACTION_PREF_STATUS_BAR_POSITION_CHANGED:
+                    if (intent.hasExtra(EXTRA_PREF_STATUS_BAR_POSITION)) {
+                        statusBarPosition = intent.getIntExtra(EXTRA_PREF_STATUS_BAR_POSITION, PREF_POSITION_LEFT);
+
+                        if (statusBarEnabled) {
+                            createTextView(TEXT_VIEW_TYPE_STATUS_BAR, statusBarFontSize, statusBarPosition);
+                        }
+                    }
+                    break;
             }
         }
     };
 
-    private void createTextView(TextViewType textViewType, TextViewPosition textViewPosition, TextViewFontSize textViewFontSize) {
-        switch (textViewType) {
-            case LOCK_SCREEN:
+    private void createTextView(int type, int fontSize, int position) {
+        switch (type) {
+            case TEXT_VIEW_TYPE_LOCK_SCREEN:
                 if (lockScreenViewGroup != null) {
                     if (lockScreenTextView != null) {
                         if (lockScreenTextView.getParent() != null) {
                             ((ViewGroup) lockScreenTextView.getParent()).removeView(lockScreenTextView);
                         }
+                    } else {
+                        lockScreenTextView = new TextView(lockScreenViewGroup.getContext());
                     }
 
-                    lockScreenTextView = new TextView(lockScreenViewGroup.getContext());
                     lockScreenTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     lockScreenTextView.setPadding(20, 0, 0, 0);
                     lockScreenTextView.setTextColor(Color.WHITE);
 
-                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                    if (fontSize == PREF_FONT_SIZE_SMALL) {
                         lockScreenTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                    } else if (fontSize == PREF_FONT_SIZE_NORMAL) {
                         lockScreenTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         lockScreenTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
                     }
 
-                    if (textViewPosition == TextViewPosition.LEFT) {
+                    if (position == PREF_POSITION_LEFT) {
                         final int childCount = lockScreenViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
@@ -341,32 +436,33 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 break;
                             }
                         }
-                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                    } else if (position == PREF_POSITION_RIGHT) {
                         lockScreenViewGroup.addView(lockScreenTextView, lockScreenViewGroup.getChildCount());
                     }
                 }
                 break;
-            case NOTIFICATION_SHADE_HEADER:
+            case TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER:
                 if (notificationShadeHeaderViewGroup != null) {
                     if (notificationShadeHeaderTextView != null) {
                         if (notificationShadeHeaderTextView.getParent() != null) {
                             ((ViewGroup) notificationShadeHeaderTextView.getParent()).removeView(notificationShadeHeaderTextView);
                         }
+                    } else {
+                        notificationShadeHeaderTextView = new TextView(notificationShadeHeaderViewGroup.getContext());
                     }
 
-                    notificationShadeHeaderTextView = new TextView(notificationShadeHeaderViewGroup.getContext());
                     notificationShadeHeaderTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
                     notificationShadeHeaderTextView.setTextColor(Color.WHITE);
 
-                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                    if (fontSize == PREF_FONT_SIZE_SMALL) {
                         notificationShadeHeaderTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                    } else if (fontSize == PREF_FONT_SIZE_NORMAL) {
                         notificationShadeHeaderTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         notificationShadeHeaderTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
                     }
 
-                    if (textViewPosition == TextViewPosition.LEFT) {
+                    if (position == PREF_POSITION_LEFT) {
                         final int childCount = notificationShadeHeaderViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
@@ -375,32 +471,33 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 break;
                             }
                         }
-                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                    } else if (position == PREF_POSITION_RIGHT) {
                         notificationShadeHeaderViewGroup.addView(notificationShadeHeaderTextView, notificationShadeHeaderViewGroup.getChildCount());
                     }
                 }
                 break;
-            case STATUS_BAR:
+            case TEXT_VIEW_TYPE_STATUS_BAR:
                 if (statusBarViewGroup != null) {
                     if (statusBarTextView != null) {
                         if (statusBarTextView.getParent() != null) {
                             ((ViewGroup) statusBarTextView.getParent()).removeView(statusBarTextView);
                         }
+                    } else {
+                        statusBarTextView = new TextView(statusBarViewGroup.getContext());
                     }
 
-                    statusBarTextView = new TextView(statusBarViewGroup.getContext());
                     statusBarTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     statusBarTextView.setPadding(20, 0, 0, 0);
                     statusBarTextView.setTextColor(Color.WHITE);
 
-                    if (textViewFontSize == TextViewFontSize.SMALL) {
+                    if (fontSize == PREF_FONT_SIZE_SMALL) {
                         statusBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
-                    } else if (textViewFontSize == TextViewFontSize.NORMAL) {
+                    } else if (fontSize == PREF_FONT_SIZE_NORMAL) {
                         statusBarTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
                         statusBarTextView.setTypeface(Typeface.create("sans-serif-light", Typeface.BOLD));
                     }
 
-                    if (textViewPosition == TextViewPosition.LEFT) {
+                    if (position == PREF_POSITION_LEFT) {
                         final int childCount = statusBarViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
@@ -409,7 +506,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 break;
                             }
                         }
-                    } else if (textViewPosition == TextViewPosition.RIGHT) {
+                    } else if (position == PREF_POSITION_RIGHT) {
                         statusBarViewGroup.addView(statusBarTextView, statusBarViewGroup.getChildCount());
                     }
                 }
