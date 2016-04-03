@@ -112,7 +112,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedHelpers.findAndHookMethod(keyguardStatusBarViewClass, "updateVisibilities", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if (!batteryCharging && lockScreenSettingEnabled) {
+                        if ((!batteryCharging || deviceRunningCyanogenMod) && lockScreenSettingEnabled) {
                             if (percentLockScreenTextView != null) {
                                 percentLockScreenTextView.setVisibility(View.VISIBLE);
                             }
@@ -182,8 +182,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 percentLockScreenTextView.setVisibility(View.VISIBLE);
                             }
                         } else {
-                            if (percentLockScreenTextView != null) {
-                                if (!batteryCharging) {
+                            if (!batteryCharging || deviceRunningCyanogenMod) {
+                                if (percentLockScreenTextView != null) {
                                     percentLockScreenTextView.setVisibility(View.GONE);
                                 }
                             }
