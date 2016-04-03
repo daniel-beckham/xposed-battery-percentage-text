@@ -534,10 +534,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         for (int i = 0; i < childCount; i++) {
                             if (statusBarViewGroup.getChildAt(i).getClass().getName().equals("com.android.systemui.BatteryMeterView")) {
                                 statusBarViewGroup.addView(statusBarTextView, childCount - (childCount - i));
-
-                                if (!deviceRunningCyanogenMod) {
-                                    notificationShadeHeaderTextView.setPadding(0, 0, 20, 0);
-                                }
                                 break;
                             }
                         }
