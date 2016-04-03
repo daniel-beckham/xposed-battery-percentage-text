@@ -9,6 +9,8 @@
 
     <string name="pref_lock_screen_setting_title">Enable on lock screen</string>
     <string name="pref_lock_screen_setting_summary">Shows battery percentage on lock screen whether device is charging or not</string>
+    <string name="pref_notification_shade_header_setting_title">Enable on notification shade header</string>
+    <string name="pref_notification_shade_header_setting_summary">Shows battery percentage on notification shade header whether shade is expanded or not</string>
     <string name="pref_status_bar_setting_title">Enable on status bar</string>
     <string name="pref_status_bar_setting_summary">Shows battery percentage on status bar between signal cluster icons and battery icon</string>
 

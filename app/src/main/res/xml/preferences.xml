@@ -8,6 +8,11 @@
         android:title="@string/pref_lock_screen_setting_title" />
     <CheckBoxPreference
         android:defaultValue="true"
+        android:key="pref_notification_shade_header_setting"
+        android:summary="@string/pref_notification_shade_header_setting_summary"
+        android:title="@string/pref_notification_shade_header_setting_title" />
+    <CheckBoxPreference
+        android:defaultValue="true"
         android:key="pref_status_bar_setting"
         android:summary="@string/pref_status_bar_setting_summary"
         android:title="@string/pref_status_bar_setting_title" />
