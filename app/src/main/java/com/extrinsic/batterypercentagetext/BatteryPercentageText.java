@@ -170,10 +170,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedBridge.log(t);
             }
 
+            // Alpha channel change implementation
             try {
-                // Sometimes the status bar icons will change alpha channels depending on the app
-                // that is currently open. We'll hook a method in this class so that our injected
-                // text will change as well.
                 final Class<?> statusBarIconControllerClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBarTransitions", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(statusBarIconControllerClass, "applyMode", int.class, boolean.class, new XC_MethodHook() {
@@ -189,9 +187,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedBridge.log(t);
             }
 
+            // Color change implementation
             try {
-                // The status bar icons can also sometimes change colors. A method in this class
-                // will be hooked so that our injected text will receive those changes.
                 final Class<?> statusBarIconControllerClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.StatusBarIconController", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(statusBarIconControllerClass, "applyIconTint", new XC_MethodHook() {
@@ -207,9 +204,10 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedBridge.log(t);
             }
 
+            // CyanogenMod fix implementation
             try {
                 // This is a non-standard class found in CyanogenMod. If it exists, then we'll try
-                // to use it to hide the existing battery percentage text.
+                // to hook one of its methods to hide the existing battery percentage text.
                 final Class<?> batteryLevelTextViewClass = XposedHelpers.findClass("com.android.systemui.BatteryLevelTextView", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(batteryLevelTextViewClass, "updateVisibility", new XC_MethodHook() {
