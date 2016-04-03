@@ -1,20 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_lock_screen_setting"
-        android:summary="@string/pref_lock_screen_setting_summary"
-        android:title="@string/pref_lock_screen_setting_title" />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_notification_shade_header_setting"
-        android:summary="@string/pref_notification_shade_header_setting_summary"
-        android:title="@string/pref_notification_shade_header_setting_title" />
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="pref_status_bar_setting"
-        android:summary="@string/pref_status_bar_setting_summary"
-        android:title="@string/pref_status_bar_setting_title" />
+    <PreferenceCategory android:title="@string/pref_lock_screen_category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_lock_screen"
+            android:summary="@string/pref_lock_screen_summary"
+            android:title="@string/pref_lock_screen_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/position_options"
+            android:entryValues="@array/position_values"
+            android:key="pref_lock_screen_position"
+            android:title="@string/pref_position_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/text_size_options"
+            android:entryValues="@array/text_size_values"
+            android:key="pref_lock_screen_text_size"
+            android:title="@string/pref_text_size_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_notification_shade_header_category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_notification_shade_header"
+            android:summary="@string/pref_notification_shade_header_summary"
+            android:title="@string/pref_notification_shade_header_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/position_options"
+            android:entryValues="@array/position_values"
+            android:key="pref_notification_shade_header_position"
+            android:title="@string/pref_position_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/text_size_options"
+            android:entryValues="@array/text_size_values"
+            android:key="pref_notification_shade_header_text_size"
+            android:title="@string/pref_text_size_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_status_bar_category">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_status_bar"
+            android:summary="@string/pref_status_bar_summary"
+            android:title="@string/pref_status_bar_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/position_options"
+            android:entryValues="@array/position_values"
+            android:key="pref_status_bar_position"
+            android:title="@string/pref_position_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+            android:defaultValue="0"
+            android:entries="@array/text_size_options"
+            android:entryValues="@array/text_size_values"
+            android:key="pref_status_bar_text_size"
+            android:title="@string/pref_text_size_title" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -28,9 +28,9 @@ import static com.extrinsic.batterypercentagetext.SettingsFragment.ACTION_PREF_S
 import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_LOCK_SCREEN_SETTING_ENABLED;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_NOTIFICATION_SHADE_HEADER_ENABLED;
 import static com.extrinsic.batterypercentagetext.SettingsFragment.EXTRA_STATUS_BAR_SETTING_ENABLED;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_LOCK_SCREEN_SETTING;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_NOTIFICATION_SHADE_HEADER_SETTING;
-import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_BAR_SETTING;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_LOCK_SCREEN;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_NOTIFICATION_SHADE_HEADER;
+import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_BAR;
 
 public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private boolean batteryCharging;
@@ -51,9 +51,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
         XSharedPreferences sharedPreferences = new XSharedPreferences("com.extrinsic.batterypercentagetext");
         sharedPreferences.makeWorldReadable();
 
-        lockScreenSettingEnabled = sharedPreferences.getBoolean(PREF_LOCK_SCREEN_SETTING, true);
-        notificationShadeHeaderSettingEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_SHADE_HEADER_SETTING, true);
-        statusBarSettingEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR_SETTING, true);
+        lockScreenSettingEnabled = sharedPreferences.getBoolean(PREF_LOCK_SCREEN, true);
+        notificationShadeHeaderSettingEnabled = sharedPreferences.getBoolean(PREF_NOTIFICATION_SHADE_HEADER, true);
+        statusBarSettingEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
     }
 
     @Override
@@ -72,7 +72,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 });
             } catch (Throwable t) {
                 // It wasn't found, so we'll just ignore this exception.
-                XposedBridge.log(t);
             }
 
             // Lock screen implementation
