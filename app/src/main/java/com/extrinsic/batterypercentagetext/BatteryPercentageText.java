@@ -97,7 +97,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
             lockScreenPosition = Integer.parseInt(sharedPreferences.getString(PREF_LOCK_SCREEN_POSITION, ""));
             notificationShadeHeaderFontSize = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE, ""));
             notificationShadeHeaderPosition = Integer.parseInt(sharedPreferences.getString(PREF_NOTIFICATION_SHADE_HEADER_POSITION, ""));
-            statusBarEnabled = sharedPreferences.getBoolean(PREF_STATUS_BAR, true);
             statusBarFontSize = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_FONT_SIZE, ""));
             statusBarPosition = Integer.parseInt(sharedPreferences.getString(PREF_STATUS_BAR_POSITION, ""));
         } catch (NumberFormatException e) {
