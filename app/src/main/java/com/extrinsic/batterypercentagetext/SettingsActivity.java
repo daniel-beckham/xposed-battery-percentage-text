@@ -8,8 +8,11 @@ public class SettingsActivity extends Activity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+
+        if (getFragmentManager().findFragmentByTag("settings") == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new SettingsFragment(), "settings")
+                    .commit();
+        }
     }
 }
