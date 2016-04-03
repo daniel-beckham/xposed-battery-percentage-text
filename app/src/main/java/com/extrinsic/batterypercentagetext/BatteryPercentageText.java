@@ -31,7 +31,6 @@ import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_BATTERY_
 
 public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private static boolean mBatteryCharging;
-    private static boolean mBroadcastReceiverRegistered;
     private static boolean mLockScreenSettingEnabled;
     private static TextView mPercentLockScreenTextView;
     private static TextView mPercentStatusBarTextView;
@@ -51,6 +50,17 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
             try {
                 final Class<?> phoneKeyguardStatusBarViewClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.KeyguardStatusBarView", lpparam.classLoader);
 
+                XposedBridge.hookAllConstructors(phoneKeyguardStatusBarViewClass, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        IntentFilter intentFilter = new IntentFilter();
+                        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED);
+                        intentFilter.addAction(ACTION_PREF_STATUS_BAR_SETTING_CHANGED);
+                        ((Context) param.args[0]).registerReceiver(mBroadcastReceiver, intentFilter);
+                    }
+                });
+
                 XposedHelpers.findAndHookMethod(phoneKeyguardStatusBarViewClass, "onFinishInflate", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -61,7 +71,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedHelpers.findAndHookMethod(phoneKeyguardStatusBarViewClass, "updateVisibilities", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        mBatteryCharging = (boolean) XposedHelpers.getObjectField(param.thisObject, "mBatteryCharging");
                         mPercentLockScreenTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
 
                         if (!mBatteryCharging && mLockScreenSettingEnabled) {
@@ -71,7 +80,11 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         }
                     }
                 });
+            } catch (Throwable t) {
+                XposedBridge.log(t);
+            }
 
+            try {
                 final Class<?> phoneStatusBarClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBar", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(phoneStatusBarClass, "makeStatusBarView", new XC_MethodHook() {
@@ -97,15 +110,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
 
                             viewGroup.addView(mPercentStatusBarTextView, viewGroup.getChildCount());
                         }
-
-                        if (!mBroadcastReceiverRegistered) {
-                            IntentFilter intentFilter = new IntentFilter();
-                            intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
-                            intentFilter.addAction(ACTION_PREF_LOCK_SCREEN_SETTING_CHANGED);
-                            intentFilter.addAction(ACTION_PREF_STATUS_BAR_SETTING_CHANGED);
-                            viewGroup.getContext().registerReceiver(mBroadcastReceiver, intentFilter);
-                            mBroadcastReceiverRegistered = true;
-                        }
                     }
                 });
             } catch (Throwable t) {
@@ -119,6 +123,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Intent.ACTION_BATTERY_CHANGED:
+                    int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
+                    mBatteryCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL;
+
                     if (mPercentStatusBarTextView != null) {
                         int level = (int) (100.0 * intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0) / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 100));
                         mPercentStatusBarTextView.setText(String.format("%s%%", level));
