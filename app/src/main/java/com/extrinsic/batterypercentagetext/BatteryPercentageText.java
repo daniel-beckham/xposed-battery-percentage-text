@@ -353,8 +353,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 notificationShadeHeaderTextView.setVisibility(View.VISIBLE);
                             }
                         } else {
-                            if (notificationShadeHeaderTextView != null) {
-                                notificationShadeHeaderTextView.setVisibility(View.VISIBLE);
+                            if (notificationShadeHeaderNativeTextView != null) {
+                                notificationShadeHeaderNativeTextView.setVisibility(View.VISIBLE);
                             }
 
                             if (notificationShadeHeaderTextView != null) {
@@ -459,6 +459,12 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         lockScreenTextView.setPadding(20, 0, 0, 0);
                         lockScreenViewGroup.addView(lockScreenTextView, lockScreenViewGroup.getChildCount());
                     }
+
+                    if (lockScreenEnabled) {
+                        lockScreenTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        lockScreenTextView.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case TEXT_VIEW_TYPE_NOTIFICATION_SHADE_HEADER:
@@ -500,6 +506,12 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
                         notificationShadeHeaderViewGroup.addView(notificationShadeHeaderTextView, notificationShadeHeaderViewGroup.getChildCount());
                     }
+
+                    if (notificationShadeHeaderEnabled) {
+                        notificationShadeHeaderTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        notificationShadeHeaderTextView.setVisibility(View.GONE);
+                    }
                 }
                 break;
             case TEXT_VIEW_TYPE_STATUS_BAR:
@@ -540,6 +552,12 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     } else if (position == PREF_POSITION_RIGHT) {
                         statusBarTextView.setPadding(20, 0, 0, 0);
                         statusBarViewGroup.addView(statusBarTextView, statusBarViewGroup.getChildCount());
+                    }
+
+                    if (statusBarEnabled) {
+                        statusBarTextView.setVisibility(View.VISIBLE);
+                    } else {
+                        statusBarTextView.setVisibility(View.GONE);
                     }
                 }
                 break;
