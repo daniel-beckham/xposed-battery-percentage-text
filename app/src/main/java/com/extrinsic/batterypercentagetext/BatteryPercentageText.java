@@ -56,6 +56,7 @@ import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_STATUS_B
 
 public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private boolean batteryCharging;
+    private boolean deviceRunningCyanogenMod;
 
     private boolean lockScreenEnabled;
     private int lockScreenFontSize;
@@ -268,8 +269,10 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         XposedHelpers.setObjectField(param.thisObject, "mRequestedVisibility", View.GONE);
                     }
                 });
+
+                deviceRunningCyanogenMod = true;
             } catch (Throwable t) {
-                // It wasn't found, so we'll just ignore this exception.
+                deviceRunningCyanogenMod = false;
             }
         }
     }
@@ -429,7 +432,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     lockScreenTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    lockScreenTextView.setPadding(20, 0, 0, 0);
                     lockScreenTextView.setTextColor(Color.WHITE);
 
                     if (fontSize == PREF_FONT_SIZE_SMALL) {
@@ -440,6 +442,12 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     if (position == PREF_POSITION_LEFT) {
+                        if (!deviceRunningCyanogenMod) {
+                            lockScreenTextView.setPadding(0, 0, 20, 0);
+                        } else {
+                            lockScreenTextView.setPadding(20, 0, 0, 0);
+                        }
+
                         final int childCount = lockScreenViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
@@ -449,6 +457,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                             }
                         }
                     } else if (position == PREF_POSITION_RIGHT) {
+                        lockScreenTextView.setPadding(20, 0, 0, 0);
                         lockScreenViewGroup.addView(lockScreenTextView, lockScreenViewGroup.getChildCount());
                     }
                 }
@@ -464,7 +473,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     notificationShadeHeaderTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
                     notificationShadeHeaderTextView.setTextColor(Color.WHITE);
 
                     if (fontSize == PREF_FONT_SIZE_SMALL) {
@@ -475,6 +483,12 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     if (position == PREF_POSITION_LEFT) {
+                        if (!deviceRunningCyanogenMod) {
+                            notificationShadeHeaderTextView.setPadding(0, 0, 20, 0);
+                        } else {
+                            notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
+                        }
+
                         final int childCount = notificationShadeHeaderViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
@@ -484,6 +498,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                             }
                         }
                     } else if (position == PREF_POSITION_RIGHT) {
+                        notificationShadeHeaderTextView.setPadding(20, 0, 0, 0);
                         notificationShadeHeaderViewGroup.addView(notificationShadeHeaderTextView, notificationShadeHeaderViewGroup.getChildCount());
                     }
                 }
@@ -499,7 +514,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     statusBarTextView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    statusBarTextView.setPadding(20, 0, 0, 0);
                     statusBarTextView.setTextColor(Color.WHITE);
 
                     if (fontSize == PREF_FONT_SIZE_SMALL) {
@@ -510,15 +524,26 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
 
                     if (position == PREF_POSITION_LEFT) {
+                        if (!deviceRunningCyanogenMod) {
+                            statusBarTextView.setPadding(0, 0, 20, 0);
+                        } else {
+                            statusBarTextView.setPadding(20, 0, 0, 0);
+                        }
+
                         final int childCount = statusBarViewGroup.getChildCount();
 
                         for (int i = 0; i < childCount; i++) {
                             if (statusBarViewGroup.getChildAt(i).getClass().getName().equals("com.android.systemui.BatteryMeterView")) {
                                 statusBarViewGroup.addView(statusBarTextView, childCount - (childCount - i));
+
+                                if (!deviceRunningCyanogenMod) {
+                                    notificationShadeHeaderTextView.setPadding(0, 0, 20, 0);
+                                }
                                 break;
                             }
                         }
                     } else if (position == PREF_POSITION_RIGHT) {
+                        statusBarTextView.setPadding(20, 0, 0, 0);
                         statusBarViewGroup.addView(statusBarTextView, statusBarViewGroup.getChildCount());
                     }
                 }
