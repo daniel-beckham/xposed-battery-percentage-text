@@ -30,14 +30,13 @@ import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_BATTERY_
 import static com.extrinsic.batterypercentagetext.SettingsFragment.PREF_BATTERY_STATUS_BAR_SETTING;
 
 public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHookZygoteInit {
-    private Class<?> batteryLevelTextViewClass;
+    private boolean batteryCharging;
+    private boolean deviceRunningCyanogenMod;
     private Context keyguardStatusBarViewClassContext;
-
-    private static boolean batteryCharging;
-    private static boolean lockScreenSettingEnabled;
-    private static TextView percentLockScreenTextView;
-    private static TextView percentStatusBarTextView;
-    private static boolean statusBarSettingEnabled;
+    private boolean lockScreenSettingEnabled;
+    private TextView percentLockScreenTextView;
+    private TextView percentStatusBarTextView;
+    private boolean statusBarSettingEnabled;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -54,9 +53,11 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 final Class<?> keyguardStatusBarViewClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.KeyguardStatusBarView", lpparam.classLoader);
 
                 try {
-                    batteryLevelTextViewClass = XposedHelpers.findClass("com.android.systemui.BatteryLevelTextView", lpparam.classLoader);
+                    if (XposedHelpers.findClass("com.android.systemui.BatteryLevelTextView", lpparam.classLoader) != null) {
+                        deviceRunningCyanogenMod = true;
+                    }
                 } catch (Throwable t) {
-                    // If the class was not found, then the device must not be running CyanogenMod.
+                    deviceRunningCyanogenMod = false;
                 }
 
                 XposedBridge.hookAllConstructors(keyguardStatusBarViewClass, new XC_MethodHook() {
@@ -75,7 +76,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                 XposedHelpers.findAndHookMethod(keyguardStatusBarViewClass, "onFinishInflate", new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        if (batteryLevelTextViewClass != null) {
+                        if (deviceRunningCyanogenMod) {
                             // CyanogenMod uses a separate class (BatteryLevelTextView) for managing
                             // the battery percentage text. Since this text can be disabled in the
                             // CyanogenMod settings, we will just inject our own here instead.
@@ -98,9 +99,9 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                                 viewGroup.addView(percentLockScreenTextView, viewGroup.getChildCount());
                             }
                         } else {
-                            // If the BatteryLevelTextView class does not exist (i.e., the device is
-                            // not running CyanogenMod), then we can just use the native battery
-                            // percentage text that is displayed when the device is charging.
+                            // If the device is not running CyanogenMod, then we can just use the
+                            // native battery percentage text that is displayed when the device is
+                            // charging.
                             percentLockScreenTextView = (TextView) XposedHelpers.getObjectField(param.thisObject, "mBatteryLevel");
                         }
 
@@ -129,8 +130,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
-                        ViewGroup statusBarView = (ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView");
-                        ViewGroup viewGroup = (ViewGroup) statusBarView.findViewById(context.getResources().getIdentifier("signal_cluster", "id", "com.android.systemui"));
+                        ViewGroup viewGroup = (ViewGroup) ((ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView")).findViewById(context.getResources().getIdentifier("signal_cluster", "id", "com.android.systemui"));
 
                         if (percentStatusBarTextView == null) {
                             percentStatusBarTextView = new TextView(viewGroup.getContext());
