@@ -224,6 +224,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
 
             // Alpha channel change implementation
             try {
+                // This class has a method that changes alpha channels for elements in the status
+                // bar. We'll hook it so that our injected text will receive those changes as well.
                 final Class<?> statusBarIconControllerClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.PhoneStatusBarTransitions", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(statusBarIconControllerClass, "applyMode", int.class, boolean.class, new XC_MethodHook() {
@@ -236,11 +238,16 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
                 });
             } catch (Throwable t) {
-                XposedBridge.log(t);
+                // This class should exist on Lollipop and above. If, for some reason, it doesn't,
+                // then we'll just ignore the exception anyway since it's not really crucial to the
+                // operation of the module.
             }
 
             // Color change implementation
             try {
+                // This class was added in Marshmallow and contains a method that changes the
+                // colors of status bar elements. We'll hook this as well so that our injected text
+                // can change colors when when necessary.
                 final Class<?> statusBarIconControllerClass = XposedHelpers.findClass("com.android.systemui.statusbar.phone.StatusBarIconController", lpparam.classLoader);
 
                 XposedHelpers.findAndHookMethod(statusBarIconControllerClass, "applyIconTint", new XC_MethodHook() {
@@ -253,7 +260,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                     }
                 });
             } catch (Throwable t) {
-                XposedBridge.log(t);
+                // If this class doesn't exist, then the device is probably running Lollipop. We'll
+                // just ignore the exception.
             }
 
             // CyanogenMod fix implementation
@@ -271,6 +279,8 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
 
                 deviceRunningCyanogenMod = true;
             } catch (Throwable t) {
+                // If this class doesn't exist, then the device isn't running CyanogenMod (or a ROM
+                // containing CyanogenMod code). The exception can be safely ignored in that case.
                 deviceRunningCyanogenMod = false;
             }
         }
