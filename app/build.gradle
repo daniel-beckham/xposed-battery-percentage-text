@@ -14,5 +14,6 @@ android {
 }
 
 dependencies {
-    compile files('libs/XposedBridgeApi.jar')
+    provided 'de.robv.android.xposed:api:81'
+    provided 'de.robv.android.xposed:api:81:sources'
 }
