@@ -154,10 +154,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                             if (lockScreenNativeTextView != null) {
                                 lockScreenNativeTextView.setVisibility(View.GONE);
                             }
-
-                            if (lockScreenTextView != null) {
-                                lockScreenTextView.setVisibility(View.VISIBLE);
-                            }
                         }
                     }
                 });
@@ -188,10 +184,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                             if (notificationShadeHeaderNativeTextView != null) {
                                 notificationShadeHeaderNativeTextView.setVisibility(View.GONE);
                             }
-
-                            if (notificationShadeHeaderTextView != null) {
-                                notificationShadeHeaderTextView.setVisibility(View.VISIBLE);
-                            }
                         }
                     }
                 });
@@ -210,12 +202,6 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         statusBarViewGroup = (ViewGroup) ((ViewGroup) XposedHelpers.getObjectField(param.thisObject, "mStatusBarView")).findViewById(context.getResources().getIdentifier("system_icons", "id", "com.android.systemui"));
 
                         createTextView(TEXT_VIEW_TYPE_STATUS_BAR, statusBarFontSize, statusBarPosition);
-
-                        if (statusBarEnabled) {
-                            if (statusBarTextView != null) {
-                                statusBarTextView.setVisibility(View.VISIBLE);
-                            }
-                        }
                     }
                 });
             } catch (Throwable t) {
