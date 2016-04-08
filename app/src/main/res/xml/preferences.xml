@@ -7,13 +7,13 @@
             android:key="pref_lock_screen"
             android:summary="@string/pref_lock_screen_summary"
             android:title="@string/pref_enable_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
             android:entries="@array/position_options"
             android:entryValues="@array/position_values"
             android:key="pref_lock_screen_position"
             android:title="@string/pref_position_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"
@@ -27,13 +27,13 @@
             android:key="pref_notification_shade_header"
             android:summary="@string/pref_notification_shade_header_summary"
             android:title="@string/pref_enable_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
             android:entries="@array/position_options"
             android:entryValues="@array/position_values"
             android:key="pref_notification_shade_header_position"
             android:title="@string/pref_position_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"
@@ -47,13 +47,13 @@
             android:key="pref_status_bar"
             android:summary="@string/pref_status_bar_summary"
             android:title="@string/pref_enable_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
             android:entries="@array/position_options"
             android:entryValues="@array/position_values"
             android:key="pref_status_bar_position"
             android:title="@string/pref_position_title" />
-        <com.extrinsic.batterypercentagetext.ListPreferenceShowSummary
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="1"
             android:entries="@array/font_size_options"
             android:entryValues="@array/font_size_values"

@@ -5,13 +5,13 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;
 
-class ListPreferenceShowSummary extends ListPreference {
-    public ListPreferenceShowSummary(Context context, AttributeSet attrs) {
+class ListPreferenceHelper extends ListPreference {
+    public ListPreferenceHelper(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ListPreferenceShowSummary(Context context) {
+    public ListPreferenceHelper(Context context) {
         super(context);
         init();
     }
