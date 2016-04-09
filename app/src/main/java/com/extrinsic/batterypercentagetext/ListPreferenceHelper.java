@@ -18,7 +18,6 @@ class ListPreferenceHelper extends ListPreference {
 
     private void init() {
         setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary(getEntry());
