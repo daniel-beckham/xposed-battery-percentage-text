@@ -1,5 +1,6 @@
 package com.extrinsic.batterypercentagetext;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -67,12 +68,13 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public static final int PREF_POSITION_LEFT = 0;
     public static final int PREF_POSITION_RIGHT = 1;
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        getPreferenceManager().setSharedPreferencesMode(getActivity().getApplicationContext().MODE_WORLD_READABLE);
+        getPreferenceManager().setSharedPreferencesMode(Context.MODE_WORLD_READABLE);
         addPreferencesFromResource(R.xml.preferences);
     }
 
