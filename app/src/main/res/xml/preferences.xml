@@ -19,6 +19,12 @@
             android:entryValues="@array/font_size_values"
             android:key="pref_lock_screen_font_size"
             android:title="@string/pref_font_size_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
+            android:defaultValue="2"
+            android:entries="@array/font_style_options"
+            android:entryValues="@array/font_style_values"
+            android:key="pref_lock_screen_font_style"
+            android:title="@string/pref_font_style_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_notification_shade_header_category">
@@ -39,6 +45,12 @@
             android:entryValues="@array/font_size_values"
             android:key="pref_notification_shade_header_font_size"
             android:title="@string/pref_font_size_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
+            android:defaultValue="2"
+            android:entries="@array/font_style_options"
+            android:entryValues="@array/font_style_values"
+            android:key="pref_notification_shade_header_font_style"
+            android:title="@string/pref_font_style_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_status_bar_category">
@@ -59,6 +71,12 @@
             android:entryValues="@array/font_size_values"
             android:key="pref_status_bar_font_size"
             android:title="@string/pref_font_size_title" />
+        <com.extrinsic.batterypercentagetext.ListPreferenceHelper
+            android:defaultValue="2"
+            android:entries="@array/font_style_options"
+            android:entryValues="@array/font_style_values"
+            android:key="pref_status_bar_font_style"
+            android:title="@string/pref_font_style_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

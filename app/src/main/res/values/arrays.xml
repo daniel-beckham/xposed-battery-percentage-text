@@ -9,16 +9,33 @@
     <string-array name="position_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string-array name="font_size_options">
         <item>Small</item>
         <item>Normal</item>
+        <item>Large</item>
     </string-array>
 
     <string-array name="font_size_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="font_style_options">
+        <item>Normal</item>
+        <item>Italic</item>
+        <item>Bold</item>
+        <item>Bold Italic</item>
+    </string-array>
+
+    <string-array name="font_style_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
 </resources>
