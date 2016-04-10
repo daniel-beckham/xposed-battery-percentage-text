@@ -1,6 +1,13 @@
 Battery Percentage Text
 =======================
 
+v1.2
+----
+
+- Added font style options
+- Added another font size option
+- Added option for hiding the launcher icon
+
 v1.1
 ----
 
