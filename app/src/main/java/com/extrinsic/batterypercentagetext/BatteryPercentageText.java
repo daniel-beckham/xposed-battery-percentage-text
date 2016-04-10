@@ -158,7 +158,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
                         intentFilter.addAction(ACTION_PREF_STATUS_BAR_POSITION_CHANGED);
 
                         keyguardStatusBarViewClassContext = (Context) param.args[0];
-                        keyguardStatusBarViewClassContext.registerReceiver(mBroadcastReceiver, intentFilter);
+                        keyguardStatusBarViewClassContext.registerReceiver(broadcastReceiver, intentFilter);
                     }
                 });
 
@@ -298,7 +298,7 @@ public class BatteryPercentageText implements IXposedHookLoadPackage, IXposedHoo
         }
     }
 
-    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
