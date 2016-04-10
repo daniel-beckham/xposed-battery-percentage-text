@@ -5,7 +5,7 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_lock_screen"
-            android:summary="@string/pref_lock_screen_summary"
+            android:summary="@string/pref_enable_lock_screen_summary"
             android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
@@ -31,7 +31,7 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_notification_shade_header"
-            android:summary="@string/pref_notification_shade_header_summary"
+            android:summary="@string/pref_enable_notification_shade_header_summary"
             android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
@@ -57,7 +57,7 @@
         <SwitchPreference
             android:defaultValue="true"
             android:key="pref_status_bar"
-            android:summary="@string/pref_status_bar_summary"
+            android:summary="@string/pref_enable_status_bar_summary"
             android:title="@string/pref_enable_title" />
         <com.extrinsic.batterypercentagetext.ListPreferenceHelper
             android:defaultValue="0"
@@ -77,6 +77,14 @@
             android:entryValues="@array/font_style_values"
             android:key="pref_status_bar_font_style"
             android:title="@string/pref_font_style_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_miscellaneous_category">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_hide_launcher_icon"
+            android:summary="@string/pref_hide_launcher_icon_summary"
+            android:title="@string/pref_hide_launcher_icon_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

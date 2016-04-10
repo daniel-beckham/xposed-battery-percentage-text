@@ -1,9 +1,11 @@
 package com.extrinsic.batterypercentagetext;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
@@ -55,6 +57,8 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
     public static final String ACTION_PREF_STATUS_BAR_POSITION_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_STATUS_BAR_POSITION_CHANGED";
     public static final String EXTRA_PREF_STATUS_BAR_POSITION = "statusBarPosition";
     public static final String PREF_STATUS_BAR_POSITION = "pref_status_bar_position";
+
+    public static final String PREF_HIDE_LAUNCHER_ICON = "pref_hide_launcher_icon";
 
     public static final int PREF_FONT_SIZE_SMALL = 0;
     public static final int PREF_FONT_SIZE_NORMAL = 1;
@@ -143,6 +147,10 @@ public class SettingsFragment extends PreferenceFragment implements OnSharedPref
                 intent.setAction(ACTION_PREF_STATUS_BAR_POSITION_CHANGED);
                 intent.putExtra(EXTRA_PREF_STATUS_BAR_POSITION, Integer.parseInt(sharedPreferences.getString(key, "")));
                 break;
+            case PREF_HIDE_LAUNCHER_ICON:
+                ComponentName componentName = new ComponentName(getActivity(), "com.extrinsic.batterypercentagetext.SettingsActivityAlias");
+                int state = sharedPreferences.getBoolean(key, false) ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+                getActivity().getPackageManager().setComponentEnabledSetting(componentName, state, PackageManager.DONT_KILL_APP);
         }
 
         if (intent.getAction() != null) {
