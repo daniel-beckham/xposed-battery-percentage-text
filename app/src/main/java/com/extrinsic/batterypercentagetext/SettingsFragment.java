@@ -10,52 +10,52 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
 public class SettingsFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
-    public static final String ACTION_PREF_LOCK_SCREEN_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_LOCK_SCREEN_CHANGED";
-    public static final String EXTRA_PREF_LOCK_SCREEN_ENABLED = "lockScreenEnabled";
+    public static final String ACTION_PREF_LOCK_SCREEN_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_LOCK_SCREEN_CHANGED";
+    public static final String EXTRA_PREF_LOCK_SCREEN_ENABLED = "com.extrinsic.batterypercentagetext.extra.PREF_LOCK_SCREEN_ENABLED";
     public static final String PREF_LOCK_SCREEN = "pref_lock_screen";
 
-    public static final String ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED";
-    public static final String EXTRA_PREF_LOCK_SCREEN_FONT_SIZE = "lockScreenFontSize";
+    public static final String ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_LOCK_SCREEN_FONT_SIZE_CHANGED";
+    public static final String EXTRA_PREF_LOCK_SCREEN_FONT_SIZE = "com.extrinsic.batterypercentagetext.extra.PREF_LOCK_SCREEN_FONT_SIZE";
     public static final String PREF_LOCK_SCREEN_FONT_SIZE = "pref_lock_screen_font_size";
 
-    public static final String ACTION_PREF_LOCK_SCREEN_FONT_STYLE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_LOCK_SCREEN_FONT_STYLE_CHANGED";
-    public static final String EXTRA_PREF_LOCK_SCREEN_FONT_STYLE = "lockScreenFontStyle";
+    public static final String ACTION_PREF_LOCK_SCREEN_FONT_STYLE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_LOCK_SCREEN_FONT_STYLE_CHANGED";
+    public static final String EXTRA_PREF_LOCK_SCREEN_FONT_STYLE = "com.extrinsic.batterypercentagetext.extra.PREF_LOCK_SCREEN_FONT_STYLE";
     public static final String PREF_LOCK_SCREEN_FONT_STYLE = "pref_lock_screen_font_style";
 
-    public static final String ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED";
-    public static final String EXTRA_PREF_LOCK_SCREEN_POSITION = "lockScreenPosition";
+    public static final String ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_LOCK_SCREEN_POSITION_CHANGED";
+    public static final String EXTRA_PREF_LOCK_SCREEN_POSITION = "com.extrinsic.batterypercentagetext.extra.PREF_LOCK_SCREEN_POSITION";
     public static final String PREF_LOCK_SCREEN_POSITION = "pref_lock_screen_position";
 
-    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED";
-    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_ENABLED = "notificationShadeHeaderEnabled";
+    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_CHANGED";
+    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_ENABLED = "com.extrinsic.batterypercentagetext.extra.PREF_NOTIFICATION_SHADE_HEADER_ENABLED";
     public static final String PREF_NOTIFICATION_SHADE_HEADER = "pref_notification_shade_header";
 
-    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED";
-    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE = "notificationShadeHeaderFontSize";
+    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE_CHANGED";
+    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE = "com.extrinsic.batterypercentagetext.extra.PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE";
     public static final String PREF_NOTIFICATION_SHADE_HEADER_FONT_SIZE = "pref_notification_shade_header_font_size";
 
-    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE_CHANGED";
-    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE = "notificationShadeHeaderFontStyle";
+    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE_CHANGED";
+    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE = "com.extrinsic.batterypercentagetext.extra.PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE";
     public static final String PREF_NOTIFICATION_SHADE_HEADER_FONT_STYLE = "pref_notification_shade_header_font_style";
 
-    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED";
-    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_POSITION = "notificationShadeHeaderPosition";
+    public static final String ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_NOTIFICATION_SHADE_HEADER_POSITION_CHANGED";
+    public static final String EXTRA_PREF_NOTIFICATION_SHADE_HEADER_POSITION = "com.extrinsic.batterypercentagetext.extra.PREF_NOTIFICATION_SHADE_HEADER_POSITION";
     public static final String PREF_NOTIFICATION_SHADE_HEADER_POSITION = "pref_notification_shade_header_position";
 
-    public static final String ACTION_PREF_STATUS_BAR_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_STATUS_BAR_CHANGED";
-    public static final String EXTRA_PREF_STATUS_BAR_ENABLED = "statusBarEnabled";
+    public static final String ACTION_PREF_STATUS_BAR_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_STATUS_BAR_CHANGED";
+    public static final String EXTRA_PREF_STATUS_BAR_ENABLED = "com.extrinsic.batterypercentagetext.extra.PREF_STATUS_BAR_ENABLED";
     public static final String PREF_STATUS_BAR = "pref_status_bar";
 
-    public static final String ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED";
-    public static final String EXTRA_PREF_STATUS_BAR_FONT_SIZE = "statusBarFontSize";
+    public static final String ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_STATUS_BAR_FONT_SIZE_CHANGED";
+    public static final String EXTRA_PREF_STATUS_BAR_FONT_SIZE = "com.extrinsic.batterypercentagetext.extra.PREF_STATUS_BAR_FONT_SIZE";
     public static final String PREF_STATUS_BAR_FONT_SIZE = "pref_status_bar_font_size";
 
-    public static final String ACTION_PREF_STATUS_BAR_FONT_STYLE_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_STATUS_BAR_FONT_STYLE_CHANGED";
-    public static final String EXTRA_PREF_STATUS_BAR_FONT_STYLE = "statusBarFontStyle";
+    public static final String ACTION_PREF_STATUS_BAR_FONT_STYLE_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_STATUS_BAR_FONT_STYLE_CHANGED";
+    public static final String EXTRA_PREF_STATUS_BAR_FONT_STYLE = "com.extrinsic.batterypercentagetext.extra.PREF_STATUS_BAR_FONT_STYLE";
     public static final String PREF_STATUS_BAR_FONT_STYLE = "pref_status_bar_font_style";
 
-    public static final String ACTION_PREF_STATUS_BAR_POSITION_CHANGED = "batterypercentagetext.intent.action.ACTION_PREF_STATUS_BAR_POSITION_CHANGED";
-    public static final String EXTRA_PREF_STATUS_BAR_POSITION = "statusBarPosition";
+    public static final String ACTION_PREF_STATUS_BAR_POSITION_CHANGED = "com.extrinsic.batterypercentagetext.action.ACTION_PREF_STATUS_BAR_POSITION_CHANGED";
+    public static final String EXTRA_PREF_STATUS_BAR_POSITION = "com.extrinsic.batterypercentagetext.extra.PREF_STATUS_BAR_POSITION";
     public static final String PREF_STATUS_BAR_POSITION = "pref_status_bar_position";
 
     public static final String PREF_HIDE_LAUNCHER_ICON = "pref_hide_launcher_icon";
